@@ -1,6 +1,6 @@
 import { currentUser } from "../variables";
 
-const boolColor = (from) => {
+const boolColor = (from: string): string => {
   switch (from) {
     case "me":
       return "blue";
@@ -13,5 +13,6 @@ const boolColor = (from) => {
   }
 };
 
-const isCUrrentUser = (id) => (id === currentUser.userID ? "me" : "you");
+const isCUrrentUser = (id: string | undefined) =>
+  id === currentUser.userID ? "me" : "you";
 export { boolColor, isCUrrentUser };

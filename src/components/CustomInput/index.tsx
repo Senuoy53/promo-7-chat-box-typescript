@@ -1,4 +1,4 @@
-import "./index.css";
+import { CustomInputWrapper } from "./CustomInputWrapper";
 
 const CustomInput = ({
   value,
@@ -7,7 +7,7 @@ const CustomInput = ({
   onKeyPress,
 }: CustomInputProps) => {
   return (
-    <textarea
+    <CustomInputWrapper
       value={value}
       placeholder={placeholder}
       onChange={onChange}

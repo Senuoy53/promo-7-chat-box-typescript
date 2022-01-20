@@ -7,14 +7,16 @@ import { collections } from "../../utils/constants";
 import { createStructuredSelector } from "reselect";
 import { makeSelectLastIndex } from "../MessagesContainer/selectors";
 import { useSelector } from "react-redux";
+import { Message } from "../../utils/types";
+import { SendContainerWrapper } from "./SendContainerWrapper";
 const messagesState = createStructuredSelector({
   lastIndex: makeSelectLastIndex(),
 });
 const SendContainer = () => {
   const { create } = firebaseService(collections.chat);
   const { lastIndex } = useSelector(messagesState);
-  const [message, setMessage] = useState("");
-  const handleClick = (e) => {
+  const [message, setMessage] = useState<string>("");
+  const handleClick = (e: any) => {
     if (
       !message ||
       !currentUser.name ||
@@ -23,8 +25,8 @@ const SendContainer = () => {
     )
       return;
 
-    const data = {
-      ...currentUser,
+    const data: Message = {
+      user: { ...currentUser },
       date: new Date().toUTCString(),
       order: lastIndex + 1,
       message,
@@ -33,11 +35,11 @@ const SendContainer = () => {
       setMessage("");
     });
   };
-  const handleChange = (value) => {
+  const handleChange = (value: string) => {
     setMessage(value);
   };
   return (
-    <footer>
+    <SendContainerWrapper>
       <CustomInput
         value={message}
         placeholder="Type your message"
@@ -45,7 +47,7 @@ const SendContainer = () => {
         onKeyPress={handleClick}
       />
       <CustomButton text="Send" onClick={handleClick} />
-    </footer>
+    </SendContainerWrapper>
   );
 };
 

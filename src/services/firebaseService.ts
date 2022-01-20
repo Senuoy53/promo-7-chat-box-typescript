@@ -1,21 +1,21 @@
 import firebase from "../firebase";
 
-const firebaseService = (collectionName) => {
+const firebaseService = (collectionName: string) => {
   const db = firebase.collection(collectionName);
 
   const getAll = () => {
     return db;
   };
 
-  const create = (data) => {
+  const create = (data: any) => {
     return db.add(data);
   };
 
-  const update = (id, value) => {
+  const update = (id: string, value: any) => {
     return db.doc(id).update(value);
   };
 
-  const remove = (id) => {
+  const remove = (id: string) => {
     return db.doc(id).delete();
   };
   return { getAll, create, update, remove };

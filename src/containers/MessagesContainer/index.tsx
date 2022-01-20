@@ -1,4 +1,4 @@
-import Recac, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import MessageItem from "../../components/MessageItem";
@@ -7,6 +7,9 @@ import { isCUrrentUser } from "../../utils/chat-utils";
 import { setMessages } from "./actions";
 import { makeSelectMessagesData } from "./selectors";
 import { collections } from "../../utils/constants";
+import { Message } from "../../utils/types";
+// On peut appeler notre styled contaienr ici, on utilisant nomContainer as nomutilise
+import { MessageContainerWrapper as ChatWrapper } from "./MessageContainerWrapper";
 
 const messagesState = createStructuredSelector({
   messages: makeSelectMessagesData(),
@@ -19,12 +22,12 @@ const MessagesContainer = () => {
   const { getAll } = firebaseService(collections.chat);
 
   // Ref
-  const messageEndRef = useRef(null);
+  const messageEndRef = useRef<any>(null);
 
   const onDataChange = (items: any) => {
-    let messages = [];
+    let messages: Message[] = [];
 
-    items.docs.forEach((item: object) => {
+    items.docs.forEach((item: any) => {
       let id = item.id;
       let data = item.data();
       const newItem = { ...data, docId: id };
@@ -45,15 +48,20 @@ const MessagesContainer = () => {
   }, [messages]);
 
   return (
-    <ul id="chat">
+    <ChatWrapper>
       {messages &&
         messages.length > 0 &&
-        messages.map((item: object, index: string) => {
-          const messageProps = { ...item, from: isCUrrentUser(item.userID) };
-          return <MessageItem key={index} {...messageProps} />;
+        messages.map((item: Message, index: number) => {
+          const messageProps = {
+            ...item,
+            from: isCUrrentUser(item.user.userID),
+          };
+          return (
+            <MessageItem key={index} {...messageProps} name={item.user.name} />
+          );
         })}
       <div ref={messageEndRef} />
-    </ul>
+    </ChatWrapper>
   );
 };
 

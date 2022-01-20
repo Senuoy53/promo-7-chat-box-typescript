@@ -1,6 +1,6 @@
-import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
+import GlobalStyle from "./styles/global-styles";
 
 function App() {
   return (
@@ -11,6 +11,8 @@ function App() {
           <Route path="/home" element={<Home />} />
         </Routes>
       </BrowserRouter>
+      {/* Global Style  CSS for styled-components*/}
+      <GlobalStyle />
     </>
   );
 }

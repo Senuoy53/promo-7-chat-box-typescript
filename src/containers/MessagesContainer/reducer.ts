@@ -1,4 +1,4 @@
-import { actionTypes } from "./constants";
+import { ActionTypes } from "./constants";
 import { MessagesState } from "./types";
 import { Action } from "../../utils/types";
 
@@ -10,7 +10,7 @@ const initialState: MessagesState = {
 
 const messagesReducer = (state = initialState, action: Action) => {
   switch (action.type) {
-    case actionTypes.SET_MESSAGES:
+    case ActionTypes.SET_MESSAGES:
       return {
         ...state,
         messages: action.payload,

@@ -1,3 +1,5 @@
+import { User } from "./utils/types";
+
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -8,7 +10,7 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
-const currentUser = {
+const currentUser: User = {
   name: process.env.REACT_APP_CURRENT_USER_NAME,
   userID: process.env.REACT_APP_CURRENT_USER_ID,
 };
