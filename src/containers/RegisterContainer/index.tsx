@@ -1,28 +1,78 @@
 import { useState } from "react";
-import "./index.css";
-import { Link } from "react-router-dom";
+
+// importer useNavigate
+import { Link, useNavigate } from "react-router-dom";
+import { ValuesType } from "../../utils/types";
+import { RegisterContainerWrapper } from "./RegisterContainerWrapper";
+
+// Importer firebaseAuth et firebaseService
+import { firebaseAuth, firebaseService } from "../../services/firebaseService";
 
 const RegisterContainer = () => {
   const intialValues = { username: "", email: "", password: "" };
-  const [formValues, setFormValues] = useState(intialValues);
-  const [formErrors, setFormErrors] = useState({});
+  const [formValues, setFormValues] = useState<ValuesType>(intialValues);
+  const [formErrors, setFormErrors] = useState<ValuesType>({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  // Appeler signIn function
+  const { signUp } = firebaseAuth();
+
+  // Appeler create function
+  const { create } = firebaseService("/users");
+
+  // naviger entre les pages sans click
+  const history = useNavigate();
 
   //   HandleClick Funtion
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
 
     setFormValues({ ...formValues, [name]: value });
   };
 
   //   onClick Funtion
-  const onclick = (e) => {
+  const onclick = (e: any) => {
     e.preventDefault();
     setFormErrors(validateForm(formValues));
+
+    // To test if password or email contain errors
+    const { password, email, username } = validateForm(formValues);
+
+    if (password || email || username) return;
+
+    // SignUp
+    signUp({
+      email: formValues.email,
+      password: formValues.password,
+    })
+      .then((res) => {
+        console.log("ress sucess", res);
+
+        // Si login sucess : sauvegarder les données dans firestore
+        create({
+          // ? pour eviter le null
+          uid: res.user?.uid,
+          name: formValues.username,
+          email: res.user?.email,
+        }).then((res) => {
+          // naviger entre les pages sans click
+          history("/login");
+        });
+
+        // Vider les inputs
+        setFormValues(intialValues);
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
   };
 
   //   ValidateForm Funtion
-  const validateForm = (values) => {
-    const errors = {};
+  const validateForm = (values: ValuesType) => {
+    const errors: any = {};
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
     if (!values.username) {
@@ -44,7 +94,7 @@ const RegisterContainer = () => {
   };
 
   return (
-    <div className="RegisterContainer">
+    <RegisterContainerWrapper>
       <h3>CREATE AN ACCOUNT</h3>
       <form>
         <input
@@ -75,16 +125,14 @@ const RegisterContainer = () => {
       </form>
 
       <button onClick={onclick}>CREATE</button>
-      {/* <div id="footer"> */}
+
       <p id="agreement">
         Already have an account? Login{" "}
         <b>
-          <Link to="/loginpage">here</Link>
+          <Link to="/login">here</Link>
         </b>{" "}
       </p>
-
-      {/* </div> */}
-    </div>
+    </RegisterContainerWrapper>
   );
 };
 

@@ -1,29 +1,60 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ValuesType } from "../../utils/types";
+import { LoginContainerWrapper } from "./LoginContainerWrapper";
 
-import "./index.css";
+// Importer firebaseAuth
+import { firebaseAuth } from "../../services/firebaseService";
 
 const LoginContainer = () => {
-  const intialValues = { username: "", email: "", password: "" };
-  const [formValues, setFormValues] = useState(intialValues);
-  const [formErrors, setFormErrors] = useState({});
+  const intialValues: ValuesType = { email: "", password: "" };
+  const [formValues, setFormValues] = useState<ValuesType>(intialValues);
+  const [formErrors, setFormErrors] = useState<ValuesType>({
+    email: "",
+    password: "",
+  });
+
+  // Appeler signIn function
+  const { signIn } = firebaseAuth();
+
+  // naviger entre les pages sans click
+  const history = useNavigate();
 
   //   HandleClick Function
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
   };
 
   //   onClick Function
-  const onClick = (e) => {
+  const onClick = (e: any) => {
     //  to stop loading the page
     e.preventDefault();
     setFormErrors(validateForm(formValues));
+
+    // To test if password or email contain errors
+    const { password, email } = validateForm(formValues);
+    if (password || email) return;
+
+    // SignIn
+    signIn({ email: formValues.email, password: formValues.password })
+      .then((res) => {
+        console.log("sucess", res);
+        // Vider les inputs
+        setFormValues(intialValues);
+      })
+      .then((res) => {
+        // naviger entre les pages sans click
+        history("/");
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
   };
 
   //   ValidateForm Function
-  const validateForm = (values) => {
-    const errors = {};
+  const validateForm = (values: ValuesType) => {
+    const errors: any = {};
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
     if (!values.email) {
@@ -42,7 +73,7 @@ const LoginContainer = () => {
   };
 
   return (
-    <div className="LoginContainer">
+    <LoginContainerWrapper>
       <h3>SIGN IN</h3>
       <form>
         <input
@@ -64,8 +95,8 @@ const LoginContainer = () => {
       </form>
       <button onClick={onClick}>LOGIN</button>
       <a>DO NOT YOU REMEMBER THE PASSWORD?</a>
-      <Link to="/registerpage">CREATE A NEW ACCOUNT</Link>
-    </div>
+      <Link to="/register">CREATE A NEW ACCOUNT</Link>
+    </LoginContainerWrapper>
   );
 };
 

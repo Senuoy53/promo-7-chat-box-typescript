@@ -23,6 +23,7 @@ interface User {
 }
 
 interface ValuesType {
+  // username is optionnelle
   username?: string;
   email: string;
   password: string;

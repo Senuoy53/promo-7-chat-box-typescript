@@ -1,7 +1,8 @@
-import firebase from "../firebase";
+import { firestore, auth } from "../firebase";
+import { ValuesType } from "../utils/types";
 
 const firebaseService = (collectionName: string) => {
-  const db = firebase.collection(collectionName);
+  const db = firestore.collection(collectionName);
 
   const getAll = () => {
     return db;
@@ -21,4 +22,16 @@ const firebaseService = (collectionName: string) => {
   return { getAll, create, update, remove };
 };
 
-export { firebaseService };
+const firebaseAuth = () => {
+  // Function de l'authentification
+  const signIn = async ({ email, password }: ValuesType) =>
+    await auth.signInWithEmailAndPassword(email, password);
+
+  // Function de l'enregistrement
+  const signUp = async ({ email, password }: ValuesType) =>
+    await auth.createUserWithEmailAndPassword(email, password);
+
+  return { signIn, signUp };
+};
+
+export { firebaseService, firebaseAuth };
